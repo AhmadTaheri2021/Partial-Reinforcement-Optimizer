@@ -86,6 +86,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 We would like to thank all the institutions and individuals who contributed to the development of the Partial Reinforcement Optimizer.
 
----
-
-Feel free to customize this README to better fit your specific implementation and project details.
