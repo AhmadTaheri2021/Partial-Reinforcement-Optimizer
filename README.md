@@ -46,7 +46,7 @@ PRO incorporates various reinforcement schedules inspired by PRE theory:
 To install the PRO algorithm, clone this repository:
 
 ```bash
-git clone https://github.com/yourusername/PRO.git
+git clone https://github.com/AhmadTaheri2021/Partial-Reinforcement-Optimizer.git
 ```
 
 ## Usage
