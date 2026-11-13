@@ -22,9 +22,11 @@ Each learner ranks its variables by schedule priority and selects a subset to up
 
 *Figure 5 from Taheri et al. The flowchart shows how a learner's objective value determines which reinforcement step follows.*
 
-![Two-variable search example showing successive candidate positions and changes in the priorities of X1 and X2.](docs/figures/reinforcement-example.jpeg)
+| Figure 6 · Two-variable search | Table 2 · Schedule and objective at each step |
+| --- | --- |
+| [![Search path from T0 to T5 as PRO updates X1 and X2.](docs/figures/reinforcement-example.jpeg)](docs/figures/reinforcement-example.jpeg) | [![Schedule priorities, learner coordinates, objective value, and reinforcement at T0 through T5. Superscript a marks the selected behavior.](docs/figures/table-2.png)](docs/figures/table-2.png) |
 
-*Figure 6 from Taheri et al. At T1, changing X2 fails to improve the objective, so its priority falls from 0.6 to 0.3. At T2, changing X1 improves the objective, so its priority rises to 0.6.*
+*Figure 6 and Table 2 from Taheri et al. At T1, changing X2 fails to improve the objective, so its priority falls from 0.6 to 0.3. At T2, changing X1 improves the objective, so its priority rises to 0.6.*
 
 The paper evaluates PRO on 75 functions from CEC2005, CEC2014, and CEC-BC-2017, using Wilcoxon and Friedman tests to compare optimizers. It also applies PRO to a federated deep learning classifier for electrocardiograms. [Read the paper](https://doi.org/10.1016/j.eswa.2023.122070).
 
@@ -93,4 +95,4 @@ Taheri, A., RahimiZadeh, K., Beheshti, A., Baumbach, J., Rao, R. V., Mirjalili, 
 
 ## License
 
-The MATLAB code is distributed under the [Apache License 2.0](LICENSE). Figures 5 and 6 are reproduced from the cited paper.
+The MATLAB code is distributed under the [Apache License 2.0](LICENSE). Figures 5 and 6 and Table 2 are reproduced from the cited paper.
