@@ -1,6 +1,6 @@
 # Partial Reinforcement Optimizer (PRO)
 
-MATLAB implementation of the Partial Reinforcement Optimizer for box-constrained minimization. Each learner maintains a priority for each decision variable. PRO perturbs a subset of high-priority variables, accepts improvements, and adjusts the priorities according to the outcome.
+MATLAB implementation of the Partial Reinforcement Optimizer (PRO) for box-constrained minimization. PRO draws on the *partial reinforcement effect* in learning. In the optimizer, each candidate solution is a learner, its decision variables are behaviors, and a schedule records which variables to change next.
 
 ## Quick start
 
@@ -13,6 +13,20 @@ sphereCost = @(x) sum(x.^2);
 ```
 
 This minimizes the 10-dimensional sphere function with 30 learners and 10,000 objective evaluations. The known minimum is zero at the origin. Run `Run_PRO` for a convergence plot.
+
+## How PRO searches
+
+Each learner ranks its variables by schedule priority and selects a subset to update. PRO either moves those variables toward the best solution seen so far or moves them away from a lower-ranked peer. It evaluates the candidate once. If its cost improves, the learner accepts the move and raises the priorities of the selected variables. Otherwise, it keeps its previous position and lowers those priorities. When all priorities become equal, PRO draws a new position and schedule for that learner.
+
+![Flowchart of PRO from population initialization through variable selection, stimulation, evaluation, reinforcement, and rescheduling.](docs/figures/pro-flowchart.png)
+
+*Figure 5 from Taheri et al. The flowchart shows how a learner's objective value determines which reinforcement step follows.*
+
+![Two-variable search example showing successive candidate positions and changes in the priorities of X1 and X2.](docs/figures/reinforcement-example.jpeg)
+
+*Figure 6 from Taheri et al. At T1, changing X2 fails to improve the objective, so its priority falls from 0.6 to 0.3. At T2, changing X1 improves the objective, so its priority rises to 0.6.*
+
+The paper evaluates PRO on 75 functions from CEC2005, CEC2014, and CEC-BC-2017, using Wilcoxon and Friedman tests to compare optimizers. It also applies PRO to a federated deep learning classifier for electrocardiograms. [Read the paper](https://doi.org/10.1016/j.eswa.2023.122070).
 
 ## MATLAB API
 
@@ -61,8 +75,22 @@ test_pro
 
 ## Citation
 
-Ahmad Taheri, Keyvan RahimiZadeh, Amin Beheshti, Jan Baumbach, Ravipudi Venkata Rao, Seyedali Mirjalili, and Amir H. Gandomi. “Partial reinforcement optimizer: an evolutionary optimization algorithm.” *Expert Systems with Applications* 238 (2024), 122070.
+Taheri, A., RahimiZadeh, K., Beheshti, A., Baumbach, J., Rao, R. V., Mirjalili, S., & Gandomi, A. H. (2024). Partial reinforcement optimizer: An evolutionary optimization algorithm. *Expert Systems with Applications, 238*, 122070. [DOI 10.1016/j.eswa.2023.122070](https://doi.org/10.1016/j.eswa.2023.122070)
+
+```bibtex
+@article{taheri2024pro,
+  author  = {Taheri, Ahmad and RahimiZadeh, Keyvan and Beheshti, Amin and
+             Baumbach, Jan and Rao, Ravipudi Venkata and Mirjalili, Seyedali and
+             Gandomi, Amir H.},
+  title   = {Partial reinforcement optimizer: An evolutionary optimization algorithm},
+  journal = {Expert Systems with Applications},
+  year    = {2024},
+  volume  = {238},
+  pages   = {122070},
+  doi     = {10.1016/j.eswa.2023.122070}
+}
+```
 
 ## License
 
-[Apache License 2.0](LICENSE)
+The MATLAB code is distributed under the [Apache License 2.0](LICENSE). Figures 5 and 6 are reproduced from the cited paper.
