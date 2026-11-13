@@ -1,0 +1,7 @@
+# Local MATLAB and benchmark artifacts
+*.asv
+*.mat
+*.mex*
+cec17_func.*
+input_data/
+PROMatlabCodeCEC2017.zip

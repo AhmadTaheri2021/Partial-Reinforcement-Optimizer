@@ -1,88 +1,68 @@
 # Partial Reinforcement Optimizer (PRO)
 
-## Introduction
+MATLAB implementation of the Partial Reinforcement Optimizer for box-constrained minimization. Each learner maintains a priority for each decision variable. PRO perturbs a subset of high-priority variables, accepts improvements, and adjusts the priorities according to the outcome.
 
-The Partial Reinforcement Optimizer (PRO) is a novel evolutionary optimization algorithm inspired by the Partial Reinforcement Effect (PRE) theory from psychology. PRO is designed to solve global optimization problems more efficiently by leveraging principles from PRE, including dynamic reinforcement schedules and adaptive learning mechanisms.
+## Quick start
 
-## Reference
+Clone the repository and open its root folder in MATLAB. The optimizer and sphere example use base MATLAB.
 
-Taheri, Ahmad, Keyvan RahimiZadeh, Amin Beheshti, Jan Baumbach, Ravipudi Venkata Rao, Seyedali Mirjalili, and Amir H. Gandomi. "Partial reinforcement optimizer: an evolutionary optimization algorithm." Expert Systems with Applications 238 (2024): 122070.
-
-
-## Key Concepts
-
-### Learner
-A learner is represented as a solution vector in the search space.
-
-### Behavior
-Each component of the solution vector is a decision variable or behavior.
-
-### Population
-A group of learners forms the population for the algorithm.
-
-### Fitness Evaluation
-The quality of solutions is assessed using an objective function to guide learning and improvement.
-
-## Reinforcement Schedules
-
-PRO incorporates various reinforcement schedules inspired by PRE theory:
-- **Continuous Reinforcement**: Reinforcement after every response.
-- **Fixed-Ratio Schedules**: Reinforcement after a set number of responses.
-- **Variable-Ratio Schedules**: Reinforcement after varying numbers of responses.
-- **Fixed-Interval Schedules**: Reinforcement after a fixed time interval.
-- **Variable-Interval Schedules**: Reinforcement after varying time intervals.
-
-## Algorithm Steps
-
-1. **Initialization**: Initialize the population and set reinforcement schedules.
-2. **Selection**: Choose behaviors to stimulate based on schedule priorities.
-3. **Stimulation**: Apply changes to generate new solutions.
-4. **Evaluation**: Assess new solutions using the objective function.
-5. **Reinforcement**: Apply positive or negative reinforcement based on evaluation results.
-6. **Rescheduling**: Update schedules if necessary to improve learning efficiency.
-
-## Installation
-
-To install the PRO algorithm, clone this repository:
-
-```bash
-git clone https://github.com/AhmadTaheri2021/Partial-Reinforcement-Optimizer.git
+```matlab
+rng(42, 'twister');
+sphereCost = @(x) sum(x.^2);
+[x, f, history] = pro(sphereCost, 10, -100, 100, 30, 10000);
 ```
 
-## Usage
+This minimizes the 10-dimensional sphere function with 30 learners and 10,000 objective evaluations. The known minimum is zero at the origin. Run `Run_PRO` for a convergence plot.
 
-Here is an example of how to use the PRO algorithm in your project:
+## MATLAB API
 
-```python
-from pro_optimizer import PRO
-
-# Define your objective function
-def objective_function(x):
-    return sum(x**2)
-
-# Initialize PRO
-optimizer = PRO(objective_function, population_size=50, max_iterations=100)
-
-# Run the optimizer
-best_solution, best_value = optimizer.run()
-
-print(f"Best Solution: {best_solution}")
-print(f"Best Value: {best_value}")
+```matlab
+[x, f, history] = pro(objective, n, lb, ub, populationSize, maxEvaluations)
 ```
 
-## Experimental Results
+- `objective` receives a 1-by-`n` row vector and returns a real scalar cost. Smaller values are better.
+- `lb` and `ub` may be scalars or vectors of length `n`. Equal bounds fix a coordinate.
+- `maxEvaluations` must be at least `populationSize`. The budget includes initialization, candidate evaluations, and rescheduling.
+- `x` is the best position observed, `f` its cost, and `history(j)` the best cost through evaluation `j`. The optimizer uses the caller's random stream.
 
-PRO has been tested on 75 complex benchmark functions from the CEC2005, CEC2014, and CEC-BC-2017 test suites, consistently outperforming several well-known meta-heuristic algorithms. Additionally, PRO was successfully applied to optimize a federated deep learning classifier for ECG diagnostics, achieving high accuracy and robustness.
+## Running an external CEC2017 benchmark
 
-## Contributing
+Keep the benchmark in a separate directory with its original `input_data/` folder. Add the PRO repository to the MATLAB path and change the working directory to the benchmark folder. The original evaluator opens data files relative to the working directory. Use a MEX binary built for your platform, or compile the supplied source with a configured MATLAB C++ compiler.
 
-We welcome contributions to improve the PRO algorithm. Please fork the repository and submit a pull request with your changes.
+```matlab
+addpath('/absolute/path/to/Partial-Reinforcement-Optimizer');
+cd('/absolute/path/to/PRO Matlab Code CEC2017');
+% If your platform needs a new binary, compile once:
+% mex cec17_func.cpp
+rng(42, 'twister');
+functionId = 1;
+objective = @(x) cec17_func(x(:), functionId);
+[x, f, history] = pro(objective, 10, -100, 100, 30, 100000);
+```
+
+If the benchmark directory also contains the original MATLAB scripts, MATLAB gives those local scripts precedence. The example above calls the new `pro` entry point directly.
+
+Existing experiments with pre-evaluated learners can use the original calling convention:
+
+```matlab
+[BestCosts, BestSolCost] = PRO_v1(N, MaxFEs, LB, UB, population, pop_size, ObjFunc_ID);
+```
+
+Each learner supplies `Position` and `Cost`. Here `MaxFEs` counts **additional** objective calls. Both entry points now count rescheduled learners, retain improvements found during rescheduling, and stop exactly at the requested budget. These changes and caller-controlled seeding can produce different convergence traces from the 2023 scripts.
+
+## Tests
+
+Run from the repository root:
+
+```matlab
+addpath('tests');
+test_pro
+```
+
+## Citation
+
+Ahmad Taheri, Keyvan RahimiZadeh, Amin Beheshti, Jan Baumbach, Ravipudi Venkata Rao, Seyedali Mirjalili, and Amir H. Gandomi. “Partial reinforcement optimizer: an evolutionary optimization algorithm.” *Expert Systems with Applications* 238 (2024), 122070.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgements
-
-We would like to thank all the institutions and individuals who contributed to the development of the Partial Reinforcement Optimizer.
-
+[Apache License 2.0](LICENSE)
